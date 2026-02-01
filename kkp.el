@@ -550,6 +550,8 @@ This function returns the Emacs keybinding associated with the sequence read."
   (kkp--verbose "query (sync): sending CSI %S (timeout %s s)" query (or kkp-terminal-query-timeout "none"))
   (discard-input)
   (send-string-to-terminal (kkp--csi-escape query))
+  (when (fboundp 'flush-standard-output)
+    (flush-standard-output))
   (let ((loop-cond t)
         (terminal-input nil))
     (while loop-cond
@@ -585,7 +587,9 @@ This function code is copied from `xterm--query'."
 
       (funcall register handlers)
       (kkp--verbose "query (async): sending CSI %S to terminal" query)
-      (send-string-to-terminal (kkp--csi-escape query) terminal))))
+      (send-string-to-terminal (kkp--csi-escape query) terminal)
+      (when (fboundp 'flush-standard-output)
+        (flush-standard-output)))))
 
 
 (defun kkp--this-terminal-enabled-enhancements ()
